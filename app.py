@@ -36,16 +36,16 @@ def question(question_number):
         return redirect("/thanks")
 
 
-@app.route("/answer/<int:question_number>",methods = ["POST"])
-def answer(question_number):
-    if len(request.form) > 1:
-        flash("Hey, please select only one answer!")
-        return redirect(f"/questions/{question_number}")
-    for choice in request.form:
-        responses = session["responses"]
-        responses.append(choice)
-        session["responses"] = responses
-    return redirect(f"/questions/{question_number+1}")
+@app.route("/answer",methods = ["POST"])
+def answer():
+    number = int(request.form["number"])
+    if request.form.get("answer",None) is None:
+        flash("Please enter a valid answer")
+        return redirect(f"/questions/{number}")
+    responses = session["responses"]
+    responses.append(request.form["answer"])
+    session["responses"] = responses
+    return redirect(f"/questions/{number+1}")
 
 
 @app.route("/thanks")

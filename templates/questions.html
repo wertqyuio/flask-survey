@@ -3,16 +3,15 @@
 {% block title %}{{name}}{% endblock %}
 
 {% block content %}
-<form action="/answer/{{number}}" method="POST">
+<form action="/answer" method="POST">
     <p>Question: {{question}}</p>
 
     {% for choice in choices %}
-        <p><input type="radio" name="{{choice}}">{{choice}}</p>
+        <p><input type="radio" name="answer" value="{{choice}}">{{choice}}</p>
     {% endfor %}
+        <p><input type="hidden" name="number" value="{{number}}"></p>
 
     <button>Submit Answer</button>
-
-    <div><small>Misclick? Just click on all answers and hit submit!</small></div>
 
 </form>
 {% endblock %}
