@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect
+from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 import surveys
 app = Flask(__name__)
@@ -16,11 +16,13 @@ def index():
     return render_template("homepage.html", name = name, instructions = instructions)
 
 
-@app.route("/questions/<int:question_number>")
+@app.route("/questions/<int:question_number>",methods= ["POST","GET"])
 def question(question_number):
-    if question_number != len(responses):
+    if request.method == "POST" and question_number==0:
+        session["responses"] = []
+    if question_number != len(session["responses"]):
         flash("Hey, Please complete the survey in order!")
-        return redirect(f"/questions/{len(responses)}")
+        return redirect(f"/questions/{len(session['responses'])}")
     survey = surveys.surveys["satisfaction"] # so that we refer to same survey for questions
     question_reference = survey.questions[question_number] if question_number < len(survey.questions) else None # Question object
     name = survey.title
@@ -36,9 +38,13 @@ def question(question_number):
 
 @app.route("/answer/<int:question_number>",methods = ["POST"])
 def answer(question_number):
+    if len(request.form) > 1:
+        flash("Hey, please select only one answer!")
+        return redirect(f"/questions/{question_number}")
     for choice in request.form:
+        responses = session["responses"]
         responses.append(choice)
-    # print(f"After question {question_number}, our reponses are: {responses}")
+        session["responses"] = responses
     return redirect(f"/questions/{question_number+1}")
 
 

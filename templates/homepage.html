@@ -3,6 +3,8 @@
 {% block title %}{{name}}{% endblock %}
 
 {% block content %}
-    <h1>{{instructions}}</h1>
-    <a href="/questions/0">Start!</button>
+    <form action="/questions/0" method="POST">
+        <h1>{{instructions}}</h1>
+        <button>Start!</button>
+    </form>
 {% endblock %}
