@@ -5,11 +5,13 @@
 {% block content %}
 <form action="/answer" method="POST">
     <p>Question: {{question}}</p>
+    <div> <small>Instructions: {{instructions}}</small></div>
 
     {% for choice in choices %}
         <p><input type="radio" name="answer" value="{{choice}}">{{choice}}</p>
     {% endfor %}
         <p><input type="hidden" name="number" value="{{number}}"></p>
+        <p><input type="hidden" name="survey" value="{{survey}}"></p>
 
     <button>Submit Answer</button>
 

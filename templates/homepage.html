@@ -4,7 +4,9 @@
 
 {% block content %}
     <form action="/questions/0" method="POST">
-        <h1>{{instructions}}</h1>
+        {% for survey in surveys %}
+           <p> <input type="radio" name="survey" value="{{survey}}"> {{survey}}</p> 
+        {% endfor %}
         <button>Start!</button>
     </form>
 {% endblock %}

@@ -7,36 +7,42 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 
-responses = []
-
 @app.route("/")
 def index():
-    name = surveys.surveys["satisfaction"].title
-    instructions = surveys.surveys["satisfaction"].instructions
-    return render_template("homepage.html", name = name, instructions = instructions)
+# name = surveys.surveys["satisfaction"].title
+    survey_names = surveys.surveys.keys()
+# instructions = surveys.surveys["satisfaction"].instructions
+    return render_template("homepage.html", surveys=survey_names)
 
 
-@app.route("/questions/<int:question_number>",methods= ["POST","GET"])
+
+
+@app.route("/questions/<int:question_number>", methods=["POST", "GET"])
 def question(question_number):
-    if request.method == "POST" and question_number==0:
+    if request.method == "POST" and question_number == 0:
         session["responses"] = []
+        session["survey"] = request.form["survey"]
     if question_number != len(session["responses"]):
         flash("Hey, Please complete the survey in order!")
         return redirect(f"/questions/{len(session['responses'])}")
-    survey = surveys.surveys["satisfaction"] # so that we refer to same survey for questions
-    question_reference = survey.questions[question_number] if question_number < len(survey.questions) else None # Question object
-    name = survey.title
+    
+
+    survey_type = surveys.surveys[session["survey"]]
+
+# survey = surveys.surveys["satisfaction"]  # so that we refer to same survey for questions
+    question_reference = survey_type.questions[question_number] if question_number < len(survey_type.questions) else None # Question object
+    name = survey_type.title
     if question_reference:
         question = question_reference.question
         choices = question_reference.choices
         allow_text = question_reference.allow_text
-        return render_template("questions.html", name = name, question = question, choices = choices, number = question_number)
+        return render_template("questions.html", name=name, question=question, choices=choices, number=question_number)
     else:
         flash("Thank you")
         return redirect("/thanks")
 
 
-@app.route("/answer",methods = ["POST"])
+@app.route("/answer",methods=["POST"])
 def answer():
     number = int(request.form["number"])
     if request.form.get("answer",None) is None:
